@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>targetb0t</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface2: #252525;
+      --border: #333;
+      --text: #e8e8e8;
+      --muted: #888;
+      --red: #cc3333;
+      --target-red: #cc0000;
+      --green: #22a85a;
+      --blue: #2979ff;
+      --yellow: #f5a623;
+      --radius: 8px;
+      --font: 'Inter', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--target-red);
+      letter-spacing: -0.5px;
+    }
+
+    header .logo span { color: var(--text); }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 6px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .tab-btn:hover:not(.active) { color: var(--text); }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    /* ── Forms ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--target-red);
+    }
+
+    select option { background: var(--surface2); }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .form-actions { margin-top: 14px; display: flex; gap: 8px; align-items: center; }
+
+    /* ── Buttons ── */
+    .btn {
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      padding: 8px 16px;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn:not(:disabled):hover { opacity: 0.85; }
+
+    .btn-primary { background: var(--target-red); color: #fff; }
+    .btn-ghost {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-danger { background: #3a1515; border: 1px solid var(--red); color: var(--red); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ── Tables ── */
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #1f1f1f;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover td { background: var(--surface2); }
+    tr.selected td { background: #1e1e2e; }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .badge-active { background: #0d2e1a; color: var(--green); }
+    .badge-paused { background: #252525; color: var(--muted); }
+    .badge-in_cart { background: #0d1f3a; color: var(--blue); animation: pulse 1.5s infinite; }
+    .badge-checkout { background: #1a0d3a; color: #a36bfd; animation: pulse 1.5s infinite; }
+    .badge-error { background: #2e0d0d; color: var(--red); }
+    .badge-in_stock { background: #0d2e1a; color: var(--green); }
+    .badge-out_of_stock { background: #252525; color: var(--muted); }
+    .badge-added_to_cart { background: #0d1f3a; color: var(--blue); }
+    .badge-order_placed { background: #0d2e1a; color: var(--green); }
+    .badge-rate_limited { background: #2e1f00; color: #f5a623; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* ── Live status ── */
+    .live-status {
+      font-size: 11px;
+      margin-top: 4px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    .ls-checking   { color: var(--blue); }
+    .ls-waiting    { color: var(--muted); }
+    .ls-oos        { color: var(--muted); }
+    .ls-in-stock   { color: var(--green); font-weight: 700; }
+    .ls-carting    { color: var(--yellow); animation: pulse 1s infinite; }
+    .ls-success    { color: var(--green); }
+    .ls-error      { color: var(--red); }
+    .ls-rate-limited { color: var(--yellow); }
+    .ls-reauth     { color: var(--yellow); animation: pulse 1s infinite; }
+    .ls-default    { color: var(--muted); }
+
+    /* ── Event log panel ── */
+    .event-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .event-panel h3 { font-size: 14px; margin-bottom: 14px; }
+
+    .event-item {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #1f1f1f;
+      align-items: flex-start;
+    }
+
+    .event-item:last-child { border-bottom: none; }
+
+    .event-time {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 140px;
+    }
+
+    .event-detail {
+      font-size: 12px;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    /* ── Proxy list UI ── */
+    .proxy-list-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .proxy-list-header {
+      background: var(--surface2);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .proxy-list-header:hover { background: #2e2e2e; }
+
+    .proxy-list-name { font-weight: 600; flex: 1; }
+    .proxy-list-meta { font-size: 12px; color: var(--muted); }
+
+    .proxy-list-body {
+      display: none;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .proxy-list-body.open { display: block; }
+
+    .proxy-add-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+    .proxy-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid #1f1f1f;
+      font-size: 12px;
+    }
+
+    .proxy-row:last-child { border-bottom: none; }
+    .proxy-url { flex: 1; word-break: break-all; color: var(--muted); font-family: monospace; }
+
+    /* ── Account list UI ── */
+    .account-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .account-name { font-weight: 600; flex: 1; }
+    .account-token { font-size: 11px; color: var(--muted); font-family: monospace; }
+    .account-hint {
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .account-hint code { font-size: 11px; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      font-size: 13px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 999;
+      max-width: 320px;
+    }
+
+    #toast.show { opacity: 1; }
+    #toast.success { border-color: var(--green); color: var(--green); }
+    #toast.error { border-color: var(--red); color: var(--red); }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    code {
+      background: var(--surface2);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">target<span>b0t</span></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('tasks')">Tasks</button>
+    <button class="tab-btn" onclick="switchTab('proxies')">Proxy Lists</button>
+    <button class="tab-btn" onclick="switchTab('accounts')">Accounts</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══════ TASKS TAB ═══════ -->
+  <div id="tab-tasks" class="tab-panel active">
+
+    <div class="card">
+      <h2>Add Monitoring Task</h2>
+      <form id="task-form" onsubmit="createTask(event)">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column: span 2;">
+            <label>Target Product URL or TCIN</label>
+            <input type="text" name="url_or_tcin" placeholder="https://www.target.com/p/…/-/A-12345678  or  12345678" required />
+          </div>
+          <div class="form-group">
+            <label>Nickname</label>
+            <input type="text" name="nickname" placeholder="PS5 Disc Edition" required />
+          </div>
+          <div class="form-group">
+            <label>Check Interval (seconds, 1–30)</label>
+            <input type="number" name="interval_seconds" value="10" min="1" max="30" />
+          </div>
+          <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" name="quantity" value="1" min="1" max="10" />
+          </div>
+          <div class="form-group">
+            <label>Store ID <span style="color:var(--muted)">(optional — for pickup)</span></label>
+            <input type="text" name="store_id" placeholder="e.g. 1234" />
+          </div>
+          <div class="form-group">
+            <label>Proxy List <span style="color:var(--muted)">(optional)</span></label>
+            <select name="proxy_list_id" id="task-proxy-select">
+              <option value="">No Proxy (local)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Account <span style="color:var(--muted)">(optional — for cart)</span></label>
+            <select name="account_id" id="task-account-select">
+              <option value="">Guest (no account)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Start Monitoring</button>
+          <span id="task-form-error" style="color:var(--red);font-size:12px;"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Active Monitors</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nickname</th>
+              <th>TCIN</th>
+              <th>Status</th>
+              <th>Last Checked</th>
+              <th>Interval</th>
+              <th>Proxy / Account</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tasks-tbody">
+            <tr><td colspan="7" class="empty">No tasks yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="event-panel" class="event-panel" style="display:none;">
+      <h3>Event Log — <span id="event-panel-title"></span></h3>
+      <div id="event-list"></div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ PROXY LISTS TAB ═══════ -->
+  <div id="tab-proxies" class="tab-panel">
+
+    <div class="card">
+      <h2>Create Proxy List</h2>
+      <form id="proxy-list-form" onsubmit="createProxyList(event)" style="display:flex;gap:10px;align-items:flex-end;">
+        <div class="form-group" style="flex:1;">
+          <label>List Name</label>
+          <input type="text" name="name" placeholder="My Residential Proxies" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+    </div>
+
+    <div id="proxy-lists-container">
+      <div class="empty">No proxy lists yet.</div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ ACCOUNTS TAB ═══════ -->
+  <div id="tab-accounts" class="tab-panel">
+
+    <div class="card">
+      <h2>Add Account</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">
+        Credentials are stored locally. The bot logs in automatically when a task triggers.
+      </p>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="form-group" style="flex:0 0 130px;">
+          <label>Nickname</label>
+          <input type="text" id="acct-nickname" placeholder="My Account" value="My Account" />
+        </div>
+        <div class="form-group" style="flex:1;min-width:160px;">
+          <label>Email</label>
+          <input type="email" id="acct-email" placeholder="your@email.com" />
+        </div>
+        <div class="form-group" style="flex:1;min-width:130px;">
+          <label>Password</label>
+          <input type="password" id="acct-password" placeholder="Target password" />
+        </div>
+        <div class="form-group" style="flex:0 0 90px;">
+          <label>CCV <span style="color:var(--muted)">(optional)</span></label>
+          <input type="password" id="acct-ccv" placeholder="123" maxlength="4"
+                 style="letter-spacing:3px;text-align:center;" />
+        </div>
+        <button class="btn btn-primary" id="add-acct-btn" onclick="addAccount()">Add Account</button>
+      </div>
+      <div id="account-form-error" style="color:var(--red);font-size:12px;margin-top:8px;"></div>
+    </div>
+
+    <div id="accounts-container">
+      <div class="empty">No accounts saved yet.</div>
+    </div>
+
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script src="/static/app.js?v=3"></script>
+</body>
+</html>
